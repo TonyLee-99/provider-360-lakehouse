@@ -8,6 +8,8 @@ first rung that gives exactly one answer; two or more candidates is an abstentio
   2. profile_npi  CMS's own profile supplement maps the Profile_ID to a valid NPPES NPI
   3. name_zip     exactly one NPPES individual with the same first + last name and 5-digit ZIP
   4. name_state   exactly one NPPES individual with the same first + last name in the same state
+                  (evaluated, then switched OFF: its precision on the dev split was 97.2%, below the 99% bar;
+                  see USE_NAME_STATE and results/identity.json "rung_selection")
   -  ambiguous / unresolved
 
 Rungs 3-4 are evaluated on a provider-disjoint holdout in evaluate_matcher(): recipients whose true NPI is
@@ -21,6 +23,7 @@ from pyspark.sql import functions as F
 
 from p360 import lake
 
+USE_NAME_STATE = False  # chosen on the dev split only; the test split is reported, never used to choose
 PERSON_TYPES = ["Covered Recipient Physician", "Covered Recipient Non-Physician Practitioner"]
 
 
@@ -104,10 +107,12 @@ def distinct_recipients(payments: DataFrame) -> DataFrame:
     )
 
 
-def resolve(recipients: DataFrame, use_npi: bool = True) -> DataFrame:
+def resolve(recipients: DataFrame, use_npi: bool = True, use_state: bool | None = None) -> DataFrame:
     """Run the ladder. With use_npi=False rungs 1-2 are skipped (that is the holdout evaluation mode)."""
     people = nppes_people()
-    known = people.select(F.col("npi").alias("k_npi")).distinct()
+    # every NPI in the registry counts as known, including deactivated ones (their rows carry no name or
+    # entity type, so they are not in `people`); provider_360 then shows them as deactivated
+    known = lake.read("silver", "nppes_provider").select(F.col("npi").alias("k_npi"))
     r = recipients
     if use_npi:
         profile = lake.read("silver", "op_profile").select(
@@ -144,6 +149,9 @@ def resolve(recipients: DataFrame, use_npi: bool = True) -> DataFrame:
         .withColumnRenamed("n_candidates", "n_state")
         .withColumnRenamed("candidate_npi", "state_npi")
     )
+    use_state = USE_NAME_STATE if use_state is None else use_state
+    if not use_state:
+        s = s.withColumn("n_state", F.lit(None).cast("long"))
     method = (
         F.when(F.col("rec_npi_known").isNotNull(), "record_npi")
         .when(F.col("prof_npi_known").isNotNull(), "profile_npi")
@@ -173,7 +181,7 @@ def wilson(k: int, n: int, z: float = 1.96) -> list[float]:
     return [round(centre - half, 5), round(centre + half, 5)]
 
 
-def evaluate_matcher(resolutions: DataFrame, test_mod: int = 5) -> dict:
+def evaluate_matcher(resolutions: DataFrame, test_mod: int = 5, use_state: bool | None = None) -> dict:
     """Provider-disjoint holdout: truth = record NPI (rung 1); hide it and run rungs 3-4 only.
 
     The split is by Profile_ID hash, so a provider is entirely in dev or entirely in test. Rules were written
@@ -191,7 +199,7 @@ def evaluate_matcher(resolutions: DataFrame, test_mod: int = 5) -> dict:
     truth = truth.withColumn(
         "split", F.when(F.abs(F.hash("recipient_profile_id")) % test_mod == 0, "test").otherwise("dev")
     )
-    pred = resolve(truth.drop("true_npi", "split"), use_npi=False)
+    pred = resolve(truth.drop("true_npi", "split"), use_npi=False, use_state=use_state)
     joined = pred.join(
         truth.select(
             "recipient_profile_id", "recipient_npi_raw", "fn", "ln", "zip5", "state", "true_npi", "split"
@@ -212,6 +220,12 @@ def evaluate_matcher(resolutions: DataFrame, test_mod: int = 5) -> dict:
                     (F.col("method") == "name_zip") & (F.col("resolved_npi") == F.col("true_npi")), 1
                 ).otherwise(0)
             ).alias("correct_name_zip"),
+            F.sum(F.when(F.col("method") == "name_state", 1).otherwise(0)).alias("by_name_state"),
+            F.sum(
+                F.when(
+                    (F.col("method") == "name_state") & (F.col("resolved_npi") == F.col("true_npi")), 1
+                ).otherwise(0)
+            ).alias("correct_name_state"),
         )
         .collect()
     )
@@ -227,8 +241,15 @@ def evaluate_matcher(resolutions: DataFrame, test_mod: int = 5) -> dict:
             "recall": round(c / n, 5) if n else None,
             "recall_ci95": wilson(c, n),
             "abstention_rate": round(r["abstained"] / n, 5) if n else None,
-            "name_zip_precision": round(r["correct_name_zip"] / r["by_name_zip"], 5)
-            if r["by_name_zip"]
-            else None,
+            "by_rung": {
+                rung: {
+                    "predicted": r[f"by_{rung}"],
+                    "correct": r[f"correct_{rung}"],
+                    "precision": round(r[f"correct_{rung}"] / r[f"by_{rung}"], 5)
+                    if r[f"by_{rung}"]
+                    else None,
+                }
+                for rung in ("name_zip", "name_state")
+            },
         }
     return out

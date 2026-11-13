@@ -49,9 +49,20 @@ def compare_with_cms(publication: str = "2026-06") -> dict:
     )
     vendor_removed = lake.read("silver", "op_removed").select("record_id", F.col("change_type").alias("cms"))
     vendor = vendor_live.unionByName(vendor_removed)
-    j = vendor.join(ours, "record_id", "full_outer").select(
-        F.coalesce("cms", F.lit("(not in publication or removed list)")).alias("cms"),
-        F.coalesce("ours", F.lit("unchanged")).alias("ours"),
+    entry = [e for e in silver.ledger() if e["table"] == "op_payment" and e["publication"] == publication][0]
+    before = lake.read("silver", "op_payment", version=entry["delta_version"] - 1).select(
+        "record_id", F.lit(True).alias("was_in_table")
+    )
+    j = (
+        vendor.join(ours, "record_id", "full_outer")
+        .join(before, "record_id", "left")
+        .select(
+            F.coalesce("cms", F.lit("(not in publication or removed list)")).alias("cms"),
+            F.coalesce(
+                "ours",
+                F.when(F.col("was_in_table"), F.lit("unchanged")).otherwise(F.lit("never_in_our_table")),
+            ).alias("ours"),
+        )
     )
     rows = j.groupBy("cms", "ours").count().collect()
     table = {}
