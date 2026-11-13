@@ -1,0 +1,16 @@
+# data and engine state: rebuilt by `make reproduce`, never committed
+/data/
+/logs/
+/.demo/
+/spark-warehouse/
+metastore_db/
+derby.log
+.dagster_home/
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.DS_Store
+# local working notes
+/PROGRESS.md
+/notes/
