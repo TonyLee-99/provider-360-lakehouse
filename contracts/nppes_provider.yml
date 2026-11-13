@@ -1,0 +1,60 @@
+# Data contract: NPPES NPI registry (one row per NPI). We keep 52 of the 330 published columns:
+# identity, practice/mailing location, status dates and the 15 taxonomy slots (to find the primary one).
+name: nppes_provider
+version: 1
+source_member: npidata_pfile_*.csv
+exclude_member_suffix: _fileheader.csv
+primary_key: [npi]
+columns:
+  - {name: "NPI", as: npi, type: bigint, required: true}
+  - {name: "Entity Type Code", as: entity_type, type: int}
+  - {name: "Replacement NPI", as: replacement_npi, type: bigint}
+  - {name: "Provider Organization Name (Legal Business Name)", as: org_name, type: string}
+  - {name: "Provider Last Name (Legal Name)", as: last_name, type: string, pii: direct}
+  - {name: "Provider First Name", as: first_name, type: string, pii: direct}
+  - {name: "Provider Middle Name", as: middle_name, type: string, pii: direct}
+  - {name: "Provider Credential Text", as: credential, type: string}
+  - {name: "Provider First Line Business Practice Location Address", as: practice_address, type: string, pii: direct}
+  - {name: "Provider Business Practice Location Address City Name", as: practice_city, type: string}
+  - {name: "Provider Business Practice Location Address State Name", as: practice_state, type: string}
+  - {name: "Provider Business Practice Location Address Postal Code", as: practice_zip, type: string, pii: quasi}
+  - {name: "Provider First Line Business Mailing Address", as: mailing_address, type: string, pii: direct}
+  - {name: "Provider Business Mailing Address City Name", as: mailing_city, type: string}
+  - {name: "Provider Business Mailing Address State Name", as: mailing_state, type: string}
+  - {name: "Provider Business Mailing Address Postal Code", as: mailing_zip, type: string, pii: quasi}
+  - {name: "Provider Enumeration Date", as: enumeration_date, type: date, format: MM/dd/yyyy}
+  - {name: "Last Update Date", as: last_update_date, type: date, format: MM/dd/yyyy}
+  - {name: "NPI Deactivation Reason Code", as: deactivation_reason, type: string}
+  - {name: "NPI Deactivation Date", as: deactivation_date, type: date, format: MM/dd/yyyy}
+  - {name: "NPI Reactivation Date", as: reactivation_date, type: date, format: MM/dd/yyyy}
+  - {name: "Provider Sex Code", as: sex_code, type: string, pii: quasi}
+  - {name: "Healthcare Provider Taxonomy Code_1", as: taxonomy_1, type: string}
+  - {name: "Healthcare Provider Primary Taxonomy Switch_1", as: taxonomy_primary_1, type: string}
+  - {name: "Healthcare Provider Taxonomy Code_2", as: taxonomy_2, type: string}
+  - {name: "Healthcare Provider Primary Taxonomy Switch_2", as: taxonomy_primary_2, type: string}
+  - {name: "Healthcare Provider Taxonomy Code_3", as: taxonomy_3, type: string}
+  - {name: "Healthcare Provider Primary Taxonomy Switch_3", as: taxonomy_primary_3, type: string}
+  - {name: "Healthcare Provider Taxonomy Code_4", as: taxonomy_4, type: string}
+  - {name: "Healthcare Provider Primary Taxonomy Switch_4", as: taxonomy_primary_4, type: string}
+  - {name: "Healthcare Provider Taxonomy Code_5", as: taxonomy_5, type: string}
+  - {name: "Healthcare Provider Primary Taxonomy Switch_5", as: taxonomy_primary_5, type: string}
+  - {name: "Healthcare Provider Taxonomy Code_6", as: taxonomy_6, type: string}
+  - {name: "Healthcare Provider Primary Taxonomy Switch_6", as: taxonomy_primary_6, type: string}
+  - {name: "Healthcare Provider Taxonomy Code_7", as: taxonomy_7, type: string}
+  - {name: "Healthcare Provider Primary Taxonomy Switch_7", as: taxonomy_primary_7, type: string}
+  - {name: "Healthcare Provider Taxonomy Code_8", as: taxonomy_8, type: string}
+  - {name: "Healthcare Provider Primary Taxonomy Switch_8", as: taxonomy_primary_8, type: string}
+  - {name: "Healthcare Provider Taxonomy Code_9", as: taxonomy_9, type: string}
+  - {name: "Healthcare Provider Primary Taxonomy Switch_9", as: taxonomy_primary_9, type: string}
+  - {name: "Healthcare Provider Taxonomy Code_10", as: taxonomy_10, type: string}
+  - {name: "Healthcare Provider Primary Taxonomy Switch_10", as: taxonomy_primary_10, type: string}
+  - {name: "Healthcare Provider Taxonomy Code_11", as: taxonomy_11, type: string}
+  - {name: "Healthcare Provider Primary Taxonomy Switch_11", as: taxonomy_primary_11, type: string}
+  - {name: "Healthcare Provider Taxonomy Code_12", as: taxonomy_12, type: string}
+  - {name: "Healthcare Provider Primary Taxonomy Switch_12", as: taxonomy_primary_12, type: string}
+  - {name: "Healthcare Provider Taxonomy Code_13", as: taxonomy_13, type: string}
+  - {name: "Healthcare Provider Primary Taxonomy Switch_13", as: taxonomy_primary_13, type: string}
+  - {name: "Healthcare Provider Taxonomy Code_14", as: taxonomy_14, type: string}
+  - {name: "Healthcare Provider Primary Taxonomy Switch_14", as: taxonomy_primary_14, type: string}
+  - {name: "Healthcare Provider Taxonomy Code_15", as: taxonomy_15, type: string}
+  - {name: "Healthcare Provider Primary Taxonomy Switch_15", as: taxonomy_primary_15, type: string}

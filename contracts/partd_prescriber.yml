@@ -1,0 +1,12 @@
+# Data contract: Medicare Part D prescribers by provider (CMS's own per-NPI totals; referee for the by-drug file).
+name: partd_prescriber
+version: 1
+primary_key: [npi]
+columns:
+  - {name: Prscrbr_NPI, as: npi, type: bigint, required: true, pii: quasi}
+  - {name: Prscrbr_Type, as: prescriber_type, type: string}
+  - {name: Tot_Clms, as: total_claims, type: bigint, required: true}
+  - {name: Tot_Drug_Cst, as: total_drug_cost, type: "decimal(16,2)", required: true}
+  - {name: Brnd_Sprsn_Flag, as: brand_suppress_flag, type: string}
+  - {name: Gnrc_Sprsn_Flag, as: generic_suppress_flag, type: string}
+  - {name: Othr_Sprsn_Flag, as: other_suppress_flag, type: string}

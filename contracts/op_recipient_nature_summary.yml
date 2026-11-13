@@ -1,0 +1,11 @@
+# Data contract: CMS published totals per covered recipient x nature of payment (referee only).
+name: op_recipient_nature_summary
+version: 1
+primary_key: [recipient_id, nature_code]
+columns:
+  - {name: Recipient_ID, as: recipient_id, type: bigint, required: true}
+  - {name: Recipient_Type, as: recipient_type, type: string, required: true}
+  - {name: Covered_Recipient_NPI, as: npi_raw, type: string, pii: quasi}
+  - {name: Nature_Of_Payment_Type_Code, as: nature_code, type: int, required: true}
+  - {name: Number_of_Transaction, as: n_transactions, type: bigint, required: true}
+  - {name: Total_Amount, as: amount_usd, type: "decimal(16,2)", required: true}

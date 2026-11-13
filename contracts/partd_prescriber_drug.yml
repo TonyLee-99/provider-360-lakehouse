@@ -1,0 +1,18 @@
+# Data contract: Medicare Part D prescribers by provider and drug (one row per NPI x brand x generic name).
+# CMS suppresses cells with fewer than 11 claims: those rows are absent from this file.
+name: partd_prescriber_drug
+version: 1
+primary_key: [npi, brand_name, generic_name]
+columns:
+  - {name: Prscrbr_NPI, as: npi, type: bigint, required: true, pii: quasi}
+  - {name: Prscrbr_Last_Org_Name, as: last_name, type: string, pii: direct}
+  - {name: Prscrbr_First_Name, as: first_name, type: string, pii: direct}
+  - {name: Prscrbr_City, as: city, type: string}
+  - {name: Prscrbr_State_Abrvtn, as: state, type: string}
+  - {name: Prscrbr_Type, as: prescriber_type, type: string}
+  - {name: Brnd_Name, as: brand_name, type: string, required: true}
+  - {name: Gnrc_Name, as: generic_name, type: string, required: true}
+  - {name: Tot_Clms, as: total_claims, type: bigint, required: true}
+  - {name: Tot_30day_Fills, as: total_30day_fills, type: double}
+  - {name: Tot_Drug_Cst, as: total_drug_cost, type: "decimal(16,2)", required: true}
+  - {name: Tot_Benes, as: total_beneficiaries, type: bigint}

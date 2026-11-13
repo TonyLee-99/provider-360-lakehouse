@@ -1,0 +1,38 @@
+# Data contract: Open Payments general payments (one row per payment record).
+# Owner of the source: CMS Open Payments. Consumer: silver.op_payment and everything downstream.
+# pii: direct = identifies a person on its own (name, street address); quasi = narrows to a person when combined.
+name: op_general_payment
+version: 1
+source_member: OP_DTL_GNRL_PGYR2024_*.csv
+keep_all_source_columns: true   # needed so our change detection sees every field CMS compares
+primary_key: [record_id]
+hash_exclude: [Change_Type, Payment_Publication_Date]  # these differ in every publication by design
+columns:
+  - {name: Record_ID, as: record_id, type: bigint, required: true}
+  - {name: Change_Type, as: change_type, type: string, required: true,
+     accepted: [NEW, ADD, CHANGED, UNCHANGED]}
+  - {name: Program_Year, as: program_year, type: int, required: true}
+  - {name: Covered_Recipient_Type, as: recipient_type, type: string, required: true}
+  - {name: Covered_Recipient_Profile_ID, as: recipient_profile_id, type: bigint}
+  - {name: Covered_Recipient_NPI, as: recipient_npi_raw, type: string, pii: quasi}
+  - {name: Covered_Recipient_First_Name, as: recipient_first_name, type: string, pii: direct}
+  - {name: Covered_Recipient_Last_Name, as: recipient_last_name, type: string, pii: direct}
+  - {name: Recipient_Primary_Business_Street_Address_Line1, as: recipient_address, type: string, pii: direct}
+  - {name: Recipient_City, as: recipient_city, type: string}
+  - {name: Recipient_State, as: recipient_state, type: string}
+  - {name: Recipient_Zip_Code, as: recipient_zip, type: string, pii: quasi}
+  - {name: Covered_Recipient_Specialty_1, as: recipient_specialty, type: string}
+  - {name: Teaching_Hospital_ID, as: teaching_hospital_id, type: bigint}
+  - {name: Applicable_Manufacturer_or_Applicable_GPO_Making_Payment_ID, as: manufacturer_id, type: bigint,
+     required: true}
+  - {name: Applicable_Manufacturer_or_Applicable_GPO_Making_Payment_Name, as: manufacturer_name, type: string,
+     required: true}
+  - {name: Total_Amount_of_Payment_USDollars, as: amount_usd, type: "decimal(14,2)", required: true}
+  - {name: Date_of_Payment, as: payment_date, type: date, format: MM/dd/yyyy, required: true}
+  - {name: Number_of_Payments_Included_in_Total_Amount, as: n_payments, type: int}
+  - {name: Form_of_Payment_or_Transfer_of_Value, as: payment_form, type: string}
+  - {name: Nature_of_Payment_or_Transfer_of_Value, as: payment_nature, type: string, required: true}
+  - {name: Dispute_Status_for_Publication, as: dispute_status, type: string}
+  - {name: Name_of_Drug_or_Biological_or_Device_or_Medical_Supply_1, as: product_name_1, type: string}
+  - {name: Indicate_Drug_or_Biological_or_Device_or_Medical_Supply_1, as: product_kind_1, type: string}
+  - {name: Payment_Publication_Date, as: publication_date, type: date, format: MM/dd/yyyy}

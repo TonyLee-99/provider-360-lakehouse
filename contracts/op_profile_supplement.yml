@@ -1,0 +1,13 @@
+# Data contract: Open Payments covered recipient profile supplement (profile id -> NPI and names).
+name: op_profile_supplement
+version: 1
+primary_key: [profile_id]
+columns:
+  - {name: Covered_Recipient_Profile_ID, as: profile_id, type: bigint, required: true}
+  - {name: Covered_Recipient_Profile_Type, as: profile_type, type: string}
+  - {name: Covered_Recipient_NPI, as: npi_raw, type: string, pii: quasi}
+  - {name: Covered_Recipient_Profile_First_Name, as: first_name, type: string, pii: direct}
+  - {name: Covered_Recipient_Profile_Last_Name, as: last_name, type: string, pii: direct}
+  - {name: Covered_Recipient_Profile_City, as: city, type: string}
+  - {name: Covered_Recipient_Profile_State, as: state, type: string}
+  - {name: Covered_Recipient_Profile_Zipcode, as: zip, type: string, pii: quasi}

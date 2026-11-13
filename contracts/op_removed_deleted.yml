@@ -1,0 +1,10 @@
+# Data contract: Open Payments removed/deleted records list (CMS's own change feed for deletions).
+name: op_removed_deleted
+version: 1
+source_member: OP_REMOVED_DELETED_PGYR2024_*.csv
+primary_key: [record_id]
+columns:
+  - {name: Record_ID, as: record_id, type: bigint, required: true}
+  - {name: Change_Type, as: change_type, type: string, required: true, accepted: [DELETED, REMOVED]}
+  - {name: Program_Year, as: program_year, type: int, required: true}
+  - {name: Payment_Type, as: payment_type, type: string, required: true}
