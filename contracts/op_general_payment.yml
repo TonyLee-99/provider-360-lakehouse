@@ -23,6 +23,7 @@ columns:
   - {name: Recipient_Zip_Code, as: recipient_zip, type: string, pii: quasi}
   - {name: Covered_Recipient_Specialty_1, as: recipient_specialty, type: string}
   - {name: Teaching_Hospital_ID, as: teaching_hospital_id, type: bigint}
+  - {name: Teaching_Hospital_CCN, as: teaching_hospital_ccn, type: string}  # CMS's grouped files key hospitals by CCN
   - {name: Applicable_Manufacturer_or_Applicable_GPO_Making_Payment_ID, as: manufacturer_id, type: bigint,
      required: true}
   - {name: Applicable_Manufacturer_or_Applicable_GPO_Making_Payment_Name, as: manufacturer_name, type: string,

@@ -3,7 +3,9 @@
 R1  Open Payments general payments, program year 2024: our live record count and dollar total vs the CMS
     summary dashboard of the same publication (general-payments rows only, not the all-category headline).
 R2  Per recipient: our totals per covered recipient vs CMS's "payments grouped by covered recipient and nature
-    of payments" file, summed over natures. Report exact / mismatched, never "close enough".
+    of payments" file, summed over natures. Key = (recipient type, id): physicians by Profile_ID, teaching
+    hospitals by CCN (the first version keyed hospitals by Teaching_Hospital_ID and collided with profile ids,
+    see docs/INCIDENTS.md #5). Report exact / mismatched, never "close enough".
 R3  Part D: per-NPI claims summed from the by-provider-and-drug file vs CMS's by-provider file. Drug rows
     with fewer than 11 claims are suppressed in the by-drug file, so our sum can only be LOWER; anything else
     is unexplained and is reported as such.
@@ -51,10 +53,9 @@ def r1_open_payments_totals() -> dict:
 
 def r2_recipient_totals() -> dict:
     s = lake.read("silver", "op_recipient_nature_summary")
-    cms = s.groupBy("recipient_id").agg(
+    cms = s.groupBy("recipient_type", "recipient_id").agg(
         F.sum("n_transactions").alias("cms_n"),
         F.sum("amount_usd").alias("cms_usd"),
-        F.first("recipient_type").alias("cms_type"),
     )
     pay = lake.read("silver", "op_payment").where(~F.col("is_deleted"))
     ours = (
@@ -62,13 +63,13 @@ def r2_recipient_totals() -> dict:
             "recipient_id",
             F.when(
                 F.col("recipient_type") == "Covered Recipient Teaching Hospital",
-                F.col("teaching_hospital_id"),
+                F.col("teaching_hospital_ccn").cast("bigint"),
             ).otherwise(F.col("recipient_profile_id")),
         )
-        .groupBy("recipient_id")
+        .groupBy("recipient_type", "recipient_id")
         .agg(F.count("*").alias("our_n"), F.sum("amount_usd").alias("our_usd"))
     )
-    j = cms.join(ours, "recipient_id", "full_outer")
+    j = cms.join(ours, ["recipient_type", "recipient_id"], "full_outer")
     cls = (
         F.when(F.col("our_n").isNull(), "only_in_cms")
         .when(F.col("cms_n").isNull(), "only_in_ours")

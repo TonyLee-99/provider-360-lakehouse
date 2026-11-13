@@ -1,7 +1,8 @@
 # Data contract: CMS published totals per covered recipient x nature of payment (referee only).
 name: op_recipient_nature_summary
 version: 1
-primary_key: [recipient_id, nature_code]
+# physician profile ids and hospital CCNs share one number space, so the type is part of the key
+primary_key: [recipient_type, recipient_id, nature_code]
 columns:
   - {name: Recipient_ID, as: recipient_id, type: bigint, required: true}
   - {name: Recipient_Type, as: recipient_type, type: string, required: true}
