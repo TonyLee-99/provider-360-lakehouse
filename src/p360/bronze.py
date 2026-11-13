@@ -49,8 +49,11 @@ def load_bronze(name: str, landing_dir: Path = LANDING) -> dict:
     w = w.option("delta.enableChangeDataFeed", "false")
     if any(not c.replace("_", "").isalnum() for c in df.columns):
         # NPPES headers contain spaces and parentheses; Delta column mapping keeps the published names as-is
-        w = (w.option("delta.columnMapping.mode", "name").option("delta.minReaderVersion", "2")
-             .option("delta.minWriterVersion", "5"))
+        w = (
+            w.option("delta.columnMapping.mode", "name")
+            .option("delta.minReaderVersion", "2")
+            .option("delta.minWriterVersion", "5")
+        )
     w.save(target)
     rows = spark.read.format("delta").load(target).count()
     if rows != meta["rows"]:  # landing and bronze must agree row for row

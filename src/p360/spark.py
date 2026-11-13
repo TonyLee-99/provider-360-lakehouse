@@ -30,6 +30,9 @@ def get_spark() -> SparkSession:
         .config("spark.ui.enabled", "false")
         .config("spark.ui.showConsoleProgress", "false")
         .config("spark.sql.adaptive.enabled", "true")
+        # Open Payments has a few payment dates with impossible years (e.g. 0024); write them as-is, flag them in gold
+        .config("spark.sql.parquet.datetimeRebaseModeInWrite", "CORRECTED")
+        .config("spark.sql.parquet.datetimeRebaseModeInRead", "CORRECTED")
         .config("spark.sql.parquet.compression.codec", "zstd")  # ~30% smaller than snappy on this data
         .config("spark.sql.files.maxPartitionBytes", "32m")  # more, smaller input splits for 4 cores
         # every new Delta table records a change data feed: gold reads silver/gold changes incrementally
