@@ -1,0 +1,26 @@
+{
+  "recorded_at": "2026-11-13T16:33:39+00:00",
+  "classes": {
+    "provider_has_no_drug_rows": {
+      "npis": 277428,
+      "provider_file_claims": 10440635,
+      "drug_file_claims": 0,
+      "max_gap": null
+    },
+    "exact": {
+      "npis": 4150,
+      "provider_file_claims": 281073,
+      "drug_file_claims": 281073,
+      "max_gap": 0
+    },
+    "lower_consistent_with_suppression": {
+      "npis": 1135305,
+      "provider_file_claims": 1699106563,
+      "drug_file_claims": 1479347734,
+      "max_gap": 1511
+    }
+  },
+  "npis_compared": 1416883,
+  "exact_pct": 0.293,
+  "unexplained_npis": 0
+}

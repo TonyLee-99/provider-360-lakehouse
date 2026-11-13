@@ -1,0 +1,22 @@
+{
+  "recorded_at": "2026-11-13T16:36:43+00:00",
+  "classes": {
+    "exact": {
+      "recipients": 985654,
+      "cms_usd": "3418212381.19",
+      "our_usd": "3418212381.19"
+    },
+    "only_in_ours": {
+      "recipients": 3767,
+      "cms_usd": "0.00",
+      "our_usd": "2058065.25"
+    },
+    "amount_differs": {
+      "recipients": 5493,
+      "cms_usd": "6132032.03",
+      "our_usd": "4073966.78"
+    }
+  },
+  "recipients_compared": 994914,
+  "exact_pct": 99.069
+}

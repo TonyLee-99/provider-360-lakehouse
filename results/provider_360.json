@@ -1,0 +1,12 @@
+{
+  "recorded_at": "2026-11-13T16:36:34+00:00",
+  "p360_providers": 1663748,
+  "p360_both": 737937,
+  "p360_with_payments": 984802,
+  "p360_with_partd": 1416883,
+  "p360_deactivated": 8945,
+  "p360_not_in_registry": 3,
+  "p360_state_conflicts": 25374,
+  "p360_name_conflicts": 5980,
+  "p360_usd_to_partd_prescribers": "2027161475.14"
+}

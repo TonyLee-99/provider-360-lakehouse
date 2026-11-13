@@ -3,7 +3,7 @@
 - recipient_resolution  one row per distinct recipient identity on payment records -> NPI + method
 - fct_payment           live payments to people, with resolved NPI (MERGE by record_id, so it has a clean CDF)
 - agg_provider_payments per-NPI payment totals, maintained INCREMENTALLY from fct_payment's change data feed
-- partd_provider        per-NPI Medicare Part D totals from the by-drug file
+- partd_provider        per-NPI Medicare Part D: CMS totals (by-provider file) + observed by-drug subtotal
 - provider_360          one row per NPI seen in Open Payments or Part D: registry identity + both activity
                         summaries + cross-source conflicts, each attribute labelled with its source
 """
@@ -315,7 +315,8 @@ def build_provider_360() -> dict:
                     {
                         "identity, taxonomy, location, status": "NPPES",
                         "payment_*": "Open Payments (resolved via recipient_resolution)",
-                        "partd_*": "Medicare Part D by provider and drug",
+                        "partd_total_*, partd_prescriber_type": "Medicare Part D by provider (CMS totals)",
+                        "partd_drug_row_claims, partd_brands_observed": "Part D by provider and drug (unsuppressed rows)",
                     }
                 )
             ),

@@ -40,6 +40,9 @@ def headline() -> dict:
     if r2:
         h["r2_recipients"] = _fmt(r2["recipients_compared"])
         h["r2_exact_pct"] = str(r2["exact_pct"])
+        c2 = r2["classes"]
+        cms_total = sum(float(v["cms_usd"]) for v in c2.values())
+        h["r2_exact_usd_pct"] = f"{100 * float(c2['exact']['cms_usd']) / cms_total:.2f}"
     r3 = _r("r3_partd_by_provider")
     if r3:
         h["r3_npis"] = _fmt(r3["npis_compared"])
@@ -55,6 +58,9 @@ def headline() -> dict:
     if rs:
         h["restatement_records"] = _fmt(rs["records"])
         h["restatement_agree_pct"] = str(rs["agree_pct"])
+        h["restatement_never_in_table"] = _fmt(
+            sum(rs["crosstab"].get(k, {}).get("never_in_our_table", 0) for k in ("DELETED", "REMOVED"))
+        )
         m = rs["merge_metrics"].get("2026-06", {})
         h["june_inserted"] = _fmt(m.get("numTargetRowsInserted", 0))
         h["june_changed"] = _fmt(m.get("numTargetRowsMatchedUpdated", 0))
@@ -81,6 +87,9 @@ def headline() -> dict:
         h["er_precision_pct"] = f"{100 * t['precision']:.2f}"
         h["er_recall_pct"] = f"{100 * t['recall']:.2f}"
         h["er_abstain_pct"] = f"{100 * t['abstention_rate']:.2f}"
+        h["er_name_state_dev_precision_pct"] = (
+            f"{100 * ide['rung_selection']['dev_by_rung_with_name_state']['name_state']['precision']:.2f}"
+        )
         h["er_precision_ci_low_pct"] = f"{100 * t['precision_ci95'][0]:.2f}"
         pm = ide["payments_by_method"]
         total = sum(v["records"] for v in pm.values())
@@ -98,6 +107,10 @@ def headline() -> dict:
         z = perf["zorder_point_lookup"]
         h["zorder_files_before"] = _fmt(z["before"].get("numFiles", 0))
         h["zorder_files_after"] = _fmt(z["after"].get("numFiles", 0))
+        h["zorder_table_files_before"] = _fmt(z["files_in_table_before"])
+        h["zorder_table_files_after"] = _fmt(z["files_in_table_after"])
+        h["zorder_rows_scanned_before"] = _fmt(z["before"].get("numOutputRows", 0))
+        h["zorder_rows_scanned_after"] = _fmt(z["after"].get("numOutputRows", 0))
         a = perf.get("agg_incremental_vs_full")
         if a:
             h["agg_incremental_s"] = str(a["incremental_seconds"])

@@ -25,8 +25,9 @@
 | `op_primary_key_unique` | yes | duplicate `record_id` in silver | should be impossible (duplicates are quarantined); investigate the MERGE |
 | `op_matches_cms_totals` | yes | live count or USD total differs from CMS's dashboard | compare quarantine + soft deletes with the dashboard; do not publish |
 | `nppes_primary_key_unique` | yes | duplicate NPI | as above |
+| `nppes_quarantine_budget`, `reference_quarantine_budget` | yes | > 0.1% of an NPPES file or a reference table failed its contract | `silver.quarantine` |
 | `agg_incremental_equals_full` | yes | the change-feed aggregate drifted from a full recompute | delete `gold/agg_provider_payments` and its checkpoint in `gold/_cdf_checkpoints.json`; next run rebuilds |
-| `partd_matches_provider_file` | no (warn) | by-drug claims exceed CMS's by-provider totals for some NPI | read `results/r3_partd_by_provider.json` |
+| `partd_matches_provider_file` | yes | by-drug claims exceed CMS's by-provider totals for some NPI | read `results/r3_partd_by_provider.json` |
 | `public_has_no_direct_pii` | yes | a new gold column has no declared lineage, or carries direct PII | declare it in `governance.PROVIDER_360_LINEAGE` |
 
 ## Refusals (raised before anything is written)
@@ -36,7 +37,13 @@
 - `ContractViolation: source is missing contract columns`: CMS renamed or dropped a column.
 
 ## Recovery
-- A crash anywhere is safe to re-run: bronze reloads are skipped when unchanged, silver MERGEs are no-ops
-  for already-applied publications, the gold aggregate re-reads its unconsumed changes.
+- Re-running after a crash is designed to be safe, and two crash points are tested:
+  - silver: each MERGE commit is tagged with Delta `userMetadata`. If the process dies after the commit but
+    before the ledger is written, the retry finds the tagged commit and records it instead of merging again
+    (`test_crash_after_silver_commit_recovers_ledger_from_delta_history`).
+  - gold aggregate: if the process dies after the MERGE but before the change-feed checkpoint, the retry
+    re-reads the same changes and recomputes the same NPIs (`test_crash_between_merge_and_checkpoint_is_replay_safe`).
+  Bronze reloads are skipped when the input is unchanged. Other crash points (for example, in the middle of the
+  quarantine write) have not been tested.
 - Consumers read the versions in `gold/_published.json`; a bad build that never passed its checks is never
   referenced there. To roll back, point the manifest at the previous versions (Delta time travel).

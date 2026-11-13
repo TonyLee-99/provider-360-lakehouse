@@ -1,0 +1,40 @@
+{
+  "recorded_at": "2026-11-13T16:47:08+00:00",
+  "zorder_point_lookup": {
+    "npi": 1669790119,
+    "files_in_table_before": 64,
+    "files_in_table_after": 25,
+    "before": {
+      "seconds": 0.5,
+      "rows_returned": 1159,
+      "numFiles": 64,
+      "filesSize": 840557361,
+      "numOutputRows": 15461299
+    },
+    "after": {
+      "seconds": 0.54,
+      "rows_returned": 1159,
+      "numFiles": 1,
+      "filesSize": 34078110,
+      "numOutputRows": 670758
+    },
+    "optimize_seconds": 27.6
+  },
+  "join_strategy": {
+    "right_side_rows": 7548144,
+    "sort_merge": {
+      "seconds": 4.1,
+      "groups": 140
+    },
+    "broadcast": {
+      "seconds": 3.0,
+      "groups": 140
+    }
+  },
+  "agg_incremental_vs_full": {
+    "incremental_seconds": 6.8,
+    "npis_recomputed": 90674,
+    "full_seconds": 7.5,
+    "rows": 984802
+  }
+}

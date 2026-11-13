@@ -1,0 +1,83 @@
+{
+  "recorded_at": "2026-11-13T16:45:57+00:00",
+  "publication": "2026-06",
+  "crosstab": {
+    "NEW": {
+      "inserted": 273413
+    },
+    "UNCHANGED": {
+      "unchanged": 15074113
+    },
+    "REMOVED": {
+      "soft_deleted": 44,
+      "never_in_our_table": 116
+    },
+    "DELETED": {
+      "never_in_our_table": 294,
+      "soft_deleted": 159729
+    },
+    "CHANGED": {
+      "updated": 151161
+    }
+  },
+  "records": 15658870,
+  "agree": 15658870,
+  "agree_pct": 100.0,
+  "merge_metrics": {
+    "2026-01": {
+      "numOutputRows": "15385047",
+      "numOutputBytes": "1083172762",
+      "numFiles": "64"
+    },
+    "2026-06": {
+      "numOutputRows": "15658460",
+      "numTargetBytesAdded": "1102473438",
+      "numTargetRowsInserted": "273413",
+      "numTargetFilesAdded": "64",
+      "numTargetRowsMatchedDeleted": "0",
+      "numTargetFilesRemoved": "64",
+      "numTargetRowsMatchedUpdated": "151161",
+      "numTargetDeletionVectorsUpdated": "0",
+      "numTargetRowsCopied": "15074113",
+      "numTargetRowsUpdated": "310934",
+      "numTargetDeletionVectorsRemoved": "0",
+      "numTargetRowsDeleted": "0",
+      "numSourceRows": "15498687",
+      "numTargetDeletionVectorsAdded": "0",
+      "numTargetChangeFilesAdded": "64",
+      "numTargetRowsNotMatchedBySourceUpdated": "159773",
+      "numTargetRowsNotMatchedBySourceDeleted": "0",
+      "numTargetBytesRemoved": "1083172762"
+    }
+  },
+  "nppes_weekly": {
+    "table": "nppes_provider",
+    "publication": "2026-11-08",
+    "delta_version": 1,
+    "operation": "MERGE",
+    "metrics": {
+      "numOutputRows": "9900429",
+      "numTargetBytesAdded": "860950865",
+      "numTargetRowsInserted": "9313",
+      "numTargetFilesAdded": "64",
+      "numTargetRowsMatchedDeleted": "0",
+      "numTargetFilesRemoved": "64",
+      "numTargetRowsMatchedUpdated": "15429",
+      "numTargetDeletionVectorsUpdated": "0",
+      "numTargetRowsCopied": "9875687",
+      "numTargetRowsUpdated": "15429",
+      "numTargetDeletionVectorsRemoved": "0",
+      "numTargetRowsDeleted": "0",
+      "numSourceRows": "31562",
+      "numTargetDeletionVectorsAdded": "0",
+      "numTargetChangeFilesAdded": "64",
+      "numTargetRowsNotMatchedBySourceUpdated": "0",
+      "numTargetRowsNotMatchedBySourceDeleted": "0",
+      "numTargetBytesRemoved": "860033051"
+    },
+    "source_rows_valid": 31562,
+    "stale_rows_skipped": 0,
+    "quarantined": 0,
+    "applied_at": "2026-11-13T16:14:18+00:00"
+  }
+}

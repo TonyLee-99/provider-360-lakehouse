@@ -143,30 +143,40 @@ def _files_read(df) -> dict:
 def performance() -> dict:
     spark = get_spark()
     out = {}
-    # 1) Z-order / data skipping: point lookup of one provider's payments
-    fct_path = lake.path("gold", "fct_payment")
+    # 1) Z-order / data skipping: point lookup of one provider's payments. Run on a scratch copy of
+    # fct_payment (64 files, rows in MERGE order) so the published table is not rewritten, and with a 32 MB
+    # target file size so OPTIMIZE produces many files and data skipping (min/max stats) is what is measured,
+    # not just "fewer files after compaction".
+    scratch = lake.path("gold", "_perf_fct_payment")
+    lake.read("gold", "fct_payment").repartition(64).write.format("delta").mode("overwrite").option(
+        "delta.enableChangeDataFeed", "false"
+    ).save(scratch)
     npi = lake.read("gold", "agg_provider_payments").orderBy(F.desc("payment_records")).first()["npi"]
-    q = lambda: (
-        lake.read("gold", "fct_payment")
-        .where(F.col("resolved_npi") == npi)
-        .select(  # noqa: E731
-            "record_id", "amount_usd"
+
+    def q():
+        return (
+            spark.read.format("delta").load(scratch).where(F.col("resolved_npi") == npi).select("record_id")
         )
-    )
-    total_files = spark.read.format("delta").load(fct_path).inputFiles()
+
+    files_before = len(spark.read.format("delta").load(scratch).inputFiles())
     before = _files_read(q())
+    spark.conf.set("spark.databricks.delta.optimize.maxFileSize", str(32 << 20))
     t0 = time.time()
-    spark.sql(f"OPTIMIZE delta.`{fct_path}` ZORDER BY (resolved_npi)")
+    spark.sql(f"OPTIMIZE delta.`{scratch}` ZORDER BY (resolved_npi)")
     optimize_secs = round(time.time() - t0, 1)
+    spark.conf.unset("spark.databricks.delta.optimize.maxFileSize")
     after = _files_read(q())
     out["zorder_point_lookup"] = {
         "npi": npi,
-        "files_in_table_before": len(total_files),
-        "files_in_table_after": len(spark.read.format("delta").load(fct_path).inputFiles()),
+        "files_in_table_before": files_before,
+        "files_in_table_after": len(spark.read.format("delta").load(scratch).inputFiles()),
         "before": before,
         "after": after,
         "optimize_seconds": optimize_secs,
     }
+    import shutil
+
+    shutil.rmtree(scratch, ignore_errors=True)
     # 2) join strategy: payments x registry individuals
     fct = lake.read("gold", "fct_payment").select("resolved_npi", "amount_usd")
     reg = (

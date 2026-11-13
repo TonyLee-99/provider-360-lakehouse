@@ -75,6 +75,9 @@ def compare_with_cms(publication: str = "2026-06") -> dict:
         ("UNCHANGED", "unchanged"),
         ("DELETED", "soft_deleted"),
         ("REMOVED", "soft_deleted"),
+        # on CMS's removed list but not in the January file we loaded: nothing for us to delete
+        ("DELETED", "never_in_our_table"),
+        ("REMOVED", "never_in_our_table"),
     }
     agree = sum(r["count"] for r in rows if (r["cms"], r["ours"]) in expected)
     total = sum(r["count"] for r in rows)

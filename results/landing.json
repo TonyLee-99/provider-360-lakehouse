@@ -1,0 +1,172 @@
+{
+  "recorded_at": "2026-11-13T16:36:25+00:00",
+  "datasets": [
+    {
+      "dataset": "op_payment_p2026_01",
+      "rows": 15385047,
+      "columns_kept": 91,
+      "columns_in_source": 91,
+      "parquet_bytes": 454835043,
+      "seconds": 81.0
+    },
+    {
+      "dataset": "op_payment_p2026_06",
+      "rows": 15498687,
+      "columns_kept": 91,
+      "columns_in_source": 91,
+      "parquet_bytes": 808943452,
+      "seconds": 71.7
+    },
+    {
+      "dataset": "op_removed_p2026_06",
+      "rows": 160183,
+      "columns_kept": 4,
+      "columns_in_source": 4,
+      "parquet_bytes": 267684,
+      "seconds": 0.0
+    },
+    {
+      "dataset": "op_profile_supplement",
+      "rows": 1697025,
+      "columns_kept": 8,
+      "columns_in_source": 32,
+      "parquet_bytes": 36246134,
+      "seconds": 1.4
+    },
+    {
+      "dataset": "op_recipient_nature_summary",
+      "rows": 1241266,
+      "columns_kept": 6,
+      "columns_in_source": 10,
+      "parquet_bytes": 13102628,
+      "seconds": 0.7
+    },
+    {
+      "dataset": "partd_prescriber_drug",
+      "rows": 28023892,
+      "columns_kept": 12,
+      "columns_in_source": 22,
+      "parquet_bytes": 312887156,
+      "seconds": 23.7
+    },
+    {
+      "dataset": "partd_prescriber",
+      "rows": 1416883,
+      "columns_kept": 7,
+      "columns_in_source": 84,
+      "parquet_bytes": 21001319,
+      "seconds": 2.5
+    },
+    {
+      "dataset": "nppes_full",
+      "rows": 9891116,
+      "columns_kept": 52,
+      "columns_in_source": 330,
+      "parquet_bytes": 550191729,
+      "seconds": 39.9
+    },
+    {
+      "dataset": "nppes_weekly_2026_11_08",
+      "rows": 31562,
+      "columns_kept": 52,
+      "columns_in_source": 330,
+      "parquet_bytes": 1895241,
+      "seconds": 0.2
+    }
+  ],
+  "total_rows": 73345661,
+  "raw_bytes": 8388091109,
+  "landing_seconds": 221.1,
+  "downloads": [
+    {
+      "source": "op_general_2024_p2026_01",
+      "url": "https://download.cms.gov/openpayments/PGYR2024_P01232026_01102026.zip",
+      "file": "op_general_2024_p2026_01/PGYR2024_P01232026_01102026.zip",
+      "bytes": 751865342,
+      "sha256": "bda13d6f101c16f285692019c6ba355bd7aeefe0dacf86ecdad46be431d48365",
+      "last_modified": "Mon, 12 Jan 2026 00:06:53 GMT",
+      "downloaded_at": "2026-11-13T11:20:06+00:00",
+      "seconds": 11.8
+    },
+    {
+      "source": "op_general_2024_p2026_06",
+      "url": "https://download.cms.gov/openpayments/PGYR2024_P06302026_06032026.zip",
+      "file": "op_general_2024_p2026_06/PGYR2024_P06302026_06032026.zip",
+      "bytes": 1146832771,
+      "sha256": "6d73c39493ef70ef5655921526cb9f9888101b7543c0d9d807202a9511a7dbd5",
+      "last_modified": "Thu, 04 Jun 2026 03:08:26 GMT",
+      "downloaded_at": "2026-11-13T11:20:19+00:00",
+      "seconds": 13.0
+    },
+    {
+      "source": "op_summary_dashboard_p2026_06",
+      "url": "https://download.cms.gov/openpayments/SMRY_RPTS_P06302026_06032026/PBLCTN_DSHBRD_P06302026_06032026.csv",
+      "file": "op_summary_dashboard_p2026_06/PBLCTN_DSHBRD_P06302026_06032026.csv",
+      "bytes": 14112,
+      "sha256": "790511991f87f0da0933a2707c5558c0efa415a1c31601ab9cfd691b2e178951",
+      "last_modified": "Thu, 04 Jun 2026 18:47:34 GMT",
+      "downloaded_at": "2026-11-13T11:20:19+00:00",
+      "seconds": 0.1
+    },
+    {
+      "source": "op_recipient_nature_2024_p2026_06",
+      "url": "https://download.cms.gov/openpayments/SMRY_RPTS_P06302026_06032026/PBLCTN_SMRY_BY_CR_BY_NTR_OF_PYMT_PGYR2024_P06302026_06032026.csv",
+      "file": "op_recipient_nature_2024_p2026_06/PBLCTN_SMRY_BY_CR_BY_NTR_OF_PYMT_PGYR2024_P06302026_06032026.csv",
+      "bytes": 103824390,
+      "sha256": "172d0c261cd74f73c0b31891838f3db47cf7859dedf044d21c563f1565ec9878",
+      "last_modified": "Thu, 04 Jun 2026 18:47:34 GMT",
+      "downloaded_at": "2026-11-13T11:20:24+00:00",
+      "seconds": 4.6
+    },
+    {
+      "source": "op_profile_supplement_p2026_06",
+      "url": "https://download.cms.gov/openpayments/PHPRFL_P06302026_06032026/OP_CVRD_RCPNT_PRFL_SPLMTL_P06302026_06032026.csv",
+      "file": "op_profile_supplement_p2026_06/OP_CVRD_RCPNT_PRFL_SPLMTL_P06302026_06032026.csv",
+      "bytes": 404839303,
+      "sha256": "c36dbb10c1052bd0579cca3c4f170307374df50952c83d52cbedb99aa90739e9",
+      "last_modified": "Tue, 02 Jun 2026 09:57:12 GMT",
+      "downloaded_at": "2026-11-13T11:20:46+00:00",
+      "seconds": 22.6
+    },
+    {
+      "source": "partd_prescriber_drug_2024",
+      "url": "https://data.cms.gov/sites/default/files/2026-05/0ae165f4-eb44-495d-8cac-67f4571b6b83/MUP_DPR_RY26_P04_V10_DY24_NPIBN.csv",
+      "file": "partd_prescriber_drug_2024/MUP_DPR_RY26_P04_V10_DY24_NPIBN.csv",
+      "bytes": 4057615134,
+      "sha256": "45387cb165f8c7a6a69adc832044d9af4a5655a38c77089571bbb0483e278ca1",
+      "last_modified": "Wed, 06 May 2026 17:55:19 GMT",
+      "downloaded_at": "2026-11-13T11:21:23+00:00",
+      "seconds": 36.8
+    },
+    {
+      "source": "partd_prescriber_2024",
+      "url": "https://data.cms.gov/sites/default/files/2026-08/373e45e5-33ec-452c-9302-a4bdbc203459/mup_dpr_ry26_p04_v20_dy24_npi.csv",
+      "file": "partd_prescriber_2024/mup_dpr_ry26_p04_v20_dy24_npi.csv",
+      "bytes": 786130236,
+      "sha256": "5fbaf1a24f5c54bfd61719f7910fe6cc31cefc388ba9e3159d611f1810e30166",
+      "last_modified": "Mon, 03 Aug 2026 17:10:54 GMT",
+      "downloaded_at": "2026-11-13T11:21:32+00:00",
+      "seconds": 9.0
+    },
+    {
+      "source": "nppes_full_2026_11",
+      "url": "https://download.cms.gov/nppes/NPPES_Data_Dissemination_November_2026_V2.zip",
+      "file": "nppes_full_2026_11/NPPES_Data_Dissemination_November_2026_V2.zip",
+      "bytes": 1130479129,
+      "sha256": "c5a34fba9b2e04bcb87358a1e3f9f4bbfc79b49b71fb37b71f9de43570c18713",
+      "last_modified": "Tue, 03 Nov 2026 03:29:06 GMT",
+      "downloaded_at": "2026-11-13T11:21:43+00:00",
+      "seconds": 10.5
+    },
+    {
+      "source": "nppes_weekly_2026_11_02",
+      "url": "https://download.cms.gov/nppes/NPPES_Data_Dissemination_110226_110826_Weekly_V2.zip",
+      "file": "nppes_weekly_2026_11_02/NPPES_Data_Dissemination_110226_110826_Weekly_V2.zip",
+      "bytes": 6490692,
+      "sha256": "080d7707861576c58d769796c5991904c7bd8a183c2cb7db76159c9a98ca1e5a",
+      "last_modified": "Mon, 09 Nov 2026 07:07:56 GMT",
+      "downloaded_at": "2026-11-13T11:21:43+00:00",
+      "seconds": 0.3
+    }
+  ]
+}

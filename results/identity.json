@@ -1,0 +1,115 @@
+{
+  "recorded_at": "2026-11-13T16:39:02+00:00",
+  "entities_by_method": {
+    "unresolved": 4448,
+    "ambiguous": 6,
+    "record_npi": 1490025,
+    "name_zip": 872
+  },
+  "payments_by_method": {
+    "unresolved": {
+      "records": 11656,
+      "usd": "8214696.69"
+    },
+    "record_npi": {
+      "records": 15447403,
+      "usd": "2735147002.99"
+    },
+    "name_zip": {
+      "records": 2232,
+      "usd": "1737856.96"
+    },
+    "ambiguous": {
+      "records": 8,
+      "usd": "449.47"
+    }
+  },
+  "npi_quality": {
+    "records": 15461299,
+    "npi_missing": 13890,
+    "npi_bad_check_digit": 0,
+    "payment_date_outside_program_year": 75
+  },
+  "holdout": {
+    "test": {
+      "entities": 295832,
+      "predicted": 174064,
+      "correct": 173422,
+      "abstained": 979,
+      "precision": 0.99631,
+      "precision_ci95": [
+        0.99602,
+        0.99659
+      ],
+      "recall": 0.58622,
+      "recall_ci95": [
+        0.58444,
+        0.58799
+      ],
+      "abstention_rate": 0.00331,
+      "by_rung": {
+        "name_zip": {
+          "predicted": 174064,
+          "correct": 173422,
+          "precision": 0.99631
+        },
+        "name_state": {
+          "predicted": 0,
+          "correct": 0,
+          "precision": null
+        }
+      }
+    },
+    "dev": {
+      "entities": 1194193,
+      "predicted": 701979,
+      "correct": 699503,
+      "abstained": 4015,
+      "precision": 0.99647,
+      "precision_ci95": [
+        0.99633,
+        0.99661
+      ],
+      "recall": 0.58575,
+      "recall_ci95": [
+        0.58487,
+        0.58664
+      ],
+      "abstention_rate": 0.00336,
+      "by_rung": {
+        "name_zip": {
+          "predicted": 701979,
+          "correct": 699503,
+          "precision": 0.99647
+        },
+        "name_state": {
+          "predicted": 0,
+          "correct": 0,
+          "precision": null
+        }
+      }
+    }
+  },
+  "rung_selection": {
+    "rule": "keep a rung only if its precision on the DEV split is >= 0.99",
+    "dev_by_rung_with_name_state": {
+      "name_zip": {
+        "predicted": 701979,
+        "correct": 699503,
+        "precision": 0.99647
+      },
+      "name_state": {
+        "predicted": 297662,
+        "correct": 288730,
+        "precision": 0.96999
+      }
+    },
+    "test_with_name_state": {
+      "precision": 0.98839,
+      "recall": 0.82606,
+      "abstention_rate": 0.04668
+    },
+    "name_state_enabled": false
+  },
+  "holdout_seconds": 117.1
+}

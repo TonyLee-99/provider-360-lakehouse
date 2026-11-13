@@ -1,0 +1,262 @@
+{
+  "recorded_at": "2026-11-13T16:24:35+00:00",
+  "tag": "1_january",
+  "publications": [
+    "2026-01"
+  ],
+  "success": true,
+  "seconds": 916.6,
+  "assets_materialized": [
+    "bronze_tables",
+    "silver_nppes_provider",
+    "silver_op_payment",
+    "silver_reference_tables",
+    "gold_partd_provider",
+    "gold_recipient_resolution",
+    "gold_fct_payment",
+    "gold_agg_provider_payments",
+    "gold_provider_360",
+    "gold_provider_360_public",
+    "published"
+  ],
+  "checks": [
+    {
+      "check": "nppes_primary_key_unique",
+      "asset": "silver_nppes_provider",
+      "passed": true
+    },
+    {
+      "check": "nppes_quarantine_budget",
+      "asset": "silver_nppes_provider",
+      "passed": true
+    },
+    {
+      "check": "op_contract_quarantine_budget",
+      "asset": "silver_op_payment",
+      "passed": true
+    },
+    {
+      "check": "op_matches_cms_totals",
+      "asset": "silver_op_payment",
+      "passed": true
+    },
+    {
+      "check": "op_primary_key_unique",
+      "asset": "silver_op_payment",
+      "passed": true
+    },
+    {
+      "check": "reference_quarantine_budget",
+      "asset": "silver_reference_tables",
+      "passed": true
+    },
+    {
+      "check": "partd_matches_provider_file",
+      "asset": "gold_partd_provider",
+      "passed": true
+    },
+    {
+      "check": "agg_incremental_equals_full",
+      "asset": "gold_agg_provider_payments",
+      "passed": true
+    },
+    {
+      "check": "public_has_no_direct_pii",
+      "asset": "gold_provider_360_public",
+      "passed": true
+    }
+  ],
+  "steps": [
+    {
+      "asset": "bronze.op_payment_p2026_01",
+      "rows": 15385047,
+      "seconds": 5.6
+    },
+    {
+      "asset": "bronze.op_payment_p2026_06",
+      "rows": 15498687,
+      "seconds": 0.9
+    },
+    {
+      "asset": "bronze.op_removed_p2026_06",
+      "rows": 160183,
+      "seconds": 0.7
+    },
+    {
+      "asset": "bronze.op_profile_supplement",
+      "rows": 1697025,
+      "seconds": 0.7
+    },
+    {
+      "asset": "bronze.op_recipient_nature_summary",
+      "rows": 1241266,
+      "seconds": 0.7
+    },
+    {
+      "asset": "bronze.partd_prescriber_drug",
+      "rows": 28023892,
+      "seconds": 0.7
+    },
+    {
+      "asset": "bronze.partd_prescriber",
+      "rows": 1416883,
+      "seconds": 0.6
+    },
+    {
+      "asset": "bronze.nppes_full",
+      "rows": 9891116,
+      "seconds": 0.9
+    },
+    {
+      "asset": "bronze.nppes_weekly_2026_11_08",
+      "rows": 31562,
+      "seconds": 0.6
+    },
+    {
+      "asset": "silver.nppes_provider",
+      "table": "nppes_provider",
+      "publication": "2026-11-02",
+      "delta_version": 0,
+      "operation": "WRITE",
+      "metrics": {
+        "numOutputRows": "9891116",
+        "numOutputBytes": "860033051",
+        "numFiles": "64"
+      },
+      "source_rows_valid": 9891116,
+      "stale_rows_skipped": 0,
+      "quarantined": 0,
+      "applied_at": "2026-11-13T16:12:03+00:00",
+      "seconds": 152.9
+    },
+    {
+      "asset": "silver.nppes_provider",
+      "table": "nppes_provider",
+      "publication": "2026-11-08",
+      "delta_version": 1,
+      "operation": "MERGE",
+      "metrics": {
+        "numOutputRows": "9900429",
+        "numTargetBytesAdded": "860950865",
+        "numTargetRowsInserted": "9313",
+        "numTargetFilesAdded": "64",
+        "numTargetRowsMatchedDeleted": "0",
+        "numTargetFilesRemoved": "64",
+        "numTargetRowsMatchedUpdated": "15429",
+        "numTargetDeletionVectorsUpdated": "0",
+        "numTargetRowsCopied": "9875687",
+        "numTargetRowsUpdated": "15429",
+        "numTargetDeletionVectorsRemoved": "0",
+        "numTargetRowsDeleted": "0",
+        "numSourceRows": "31562",
+        "numTargetDeletionVectorsAdded": "0",
+        "numTargetChangeFilesAdded": "64",
+        "numTargetRowsNotMatchedBySourceUpdated": "0",
+        "numTargetRowsNotMatchedBySourceDeleted": "0",
+        "numTargetBytesRemoved": "860033051"
+      },
+      "source_rows_valid": 31562,
+      "stale_rows_skipped": 0,
+      "quarantined": 0,
+      "applied_at": "2026-11-13T16:14:18+00:00",
+      "seconds": 134.6
+    },
+    {
+      "asset": "silver.op_payment",
+      "table": "op_payment",
+      "publication": "2026-01",
+      "delta_version": 0,
+      "operation": "WRITE",
+      "metrics": {
+        "numOutputRows": "15385047",
+        "numOutputBytes": "1083172762",
+        "numFiles": "64"
+      },
+      "source_rows_valid": 15385047,
+      "quarantined": 0,
+      "recovered_from_commit": false,
+      "applied_at": "2026-11-13T16:18:01+00:00",
+      "seconds": 219.2
+    },
+    {
+      "asset": "silver.op_profile",
+      "table": "op_profile",
+      "publication": "2026-06",
+      "rows": 1697025,
+      "quarantined": 0,
+      "seconds": 7.3
+    },
+    {
+      "asset": "silver.op_removed",
+      "table": "op_removed",
+      "publication": "2026-06",
+      "rows": 160183,
+      "quarantined": 0,
+      "seconds": 1.9
+    },
+    {
+      "asset": "silver.op_recipient_nature_summary",
+      "table": "op_recipient_nature_summary",
+      "publication": "2026-06",
+      "rows": 1241266,
+      "quarantined": 0,
+      "seconds": 6.8
+    },
+    {
+      "asset": "silver.partd_prescriber_drug",
+      "table": "partd_prescriber_drug",
+      "publication": "DY2024",
+      "rows": 28023892,
+      "quarantined": 0,
+      "seconds": 132.4
+    },
+    {
+      "asset": "silver.partd_prescriber",
+      "table": "partd_prescriber",
+      "publication": "DY2024",
+      "rows": 1416883,
+      "quarantined": 0,
+      "seconds": 7.1
+    },
+    {
+      "asset": "gold.partd_provider",
+      "rows": 1416883,
+      "seconds": 28.6
+    },
+    {
+      "asset": "gold.recipient_resolution",
+      "rows": 1485630,
+      "seconds": 77.3
+    },
+    {
+      "asset": "gold.fct_payment",
+      "version": 0,
+      "operation": "WRITE",
+      "numOutputRows": "15350656",
+      "numOutputBytes": "712545485",
+      "numFiles": "32",
+      "seconds": 76.3
+    },
+    {
+      "asset": "gold.agg_provider_payments",
+      "mode": "full",
+      "source_version": 0,
+      "npis_recomputed": null,
+      "seconds": 6.5
+    },
+    {
+      "asset": "check.agg_incremental_equals_full",
+      "rows_incremental": 979913,
+      "rows_full": 979913,
+      "only_in_incremental": 0,
+      "only_in_full": 0,
+      "full_rebuild_seconds": 4.7
+    },
+    {
+      "asset": "gold.provider_360",
+      "rows": 1661563,
+      "seconds": 20.0
+    }
+  ],
+  "peak_rss_mb_python": 162.4
+}

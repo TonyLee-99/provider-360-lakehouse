@@ -1,0 +1,248 @@
+{
+  "recorded_at": "2026-11-13T16:36:24+00:00",
+  "tag": "2_june",
+  "publications": [
+    "2026-01",
+    "2026-06"
+  ],
+  "success": true,
+  "seconds": 707.8,
+  "assets_materialized": [
+    "bronze_tables",
+    "silver_nppes_provider",
+    "silver_op_payment",
+    "silver_reference_tables",
+    "gold_partd_provider",
+    "gold_recipient_resolution",
+    "gold_fct_payment",
+    "gold_agg_provider_payments",
+    "gold_provider_360",
+    "gold_provider_360_public",
+    "published"
+  ],
+  "checks": [
+    {
+      "check": "nppes_primary_key_unique",
+      "asset": "silver_nppes_provider",
+      "passed": true
+    },
+    {
+      "check": "nppes_quarantine_budget",
+      "asset": "silver_nppes_provider",
+      "passed": true
+    },
+    {
+      "check": "op_contract_quarantine_budget",
+      "asset": "silver_op_payment",
+      "passed": true
+    },
+    {
+      "check": "op_matches_cms_totals",
+      "asset": "silver_op_payment",
+      "passed": true
+    },
+    {
+      "check": "op_primary_key_unique",
+      "asset": "silver_op_payment",
+      "passed": true
+    },
+    {
+      "check": "reference_quarantine_budget",
+      "asset": "silver_reference_tables",
+      "passed": true
+    },
+    {
+      "check": "partd_matches_provider_file",
+      "asset": "gold_partd_provider",
+      "passed": true
+    },
+    {
+      "check": "agg_incremental_equals_full",
+      "asset": "gold_agg_provider_payments",
+      "passed": true
+    },
+    {
+      "check": "public_has_no_direct_pii",
+      "asset": "gold_provider_360_public",
+      "passed": true
+    }
+  ],
+  "steps": [
+    {
+      "asset": "bronze.op_payment_p2026_01",
+      "rows": 15385047,
+      "seconds": 7.8
+    },
+    {
+      "asset": "bronze.op_payment_p2026_06",
+      "rows": 15498687,
+      "seconds": 1.3
+    },
+    {
+      "asset": "bronze.op_removed_p2026_06",
+      "rows": 160183,
+      "seconds": 1.1
+    },
+    {
+      "asset": "bronze.op_profile_supplement",
+      "rows": 1697025,
+      "seconds": 1.0
+    },
+    {
+      "asset": "bronze.op_recipient_nature_summary",
+      "rows": 1241266,
+      "seconds": 0.9
+    },
+    {
+      "asset": "bronze.partd_prescriber_drug",
+      "rows": 28023892,
+      "seconds": 0.8
+    },
+    {
+      "asset": "bronze.partd_prescriber",
+      "rows": 1416883,
+      "seconds": 0.7
+    },
+    {
+      "asset": "bronze.nppes_full",
+      "rows": 9891116,
+      "seconds": 1.0
+    },
+    {
+      "asset": "bronze.nppes_weekly_2026_11_08",
+      "rows": 31562,
+      "seconds": 0.7
+    },
+    {
+      "asset": "silver.op_payment",
+      "table": "op_payment",
+      "publication": "2026-06",
+      "delta_version": 1,
+      "operation": "MERGE",
+      "metrics": {
+        "numOutputRows": "15658460",
+        "numTargetBytesAdded": "1102473438",
+        "numTargetRowsInserted": "273413",
+        "numTargetFilesAdded": "64",
+        "numTargetRowsMatchedDeleted": "0",
+        "numTargetFilesRemoved": "64",
+        "numTargetRowsMatchedUpdated": "151161",
+        "numTargetDeletionVectorsUpdated": "0",
+        "numTargetRowsCopied": "15074113",
+        "numTargetRowsUpdated": "310934",
+        "numTargetDeletionVectorsRemoved": "0",
+        "numTargetRowsDeleted": "0",
+        "numSourceRows": "15498687",
+        "numTargetDeletionVectorsAdded": "0",
+        "numTargetChangeFilesAdded": "64",
+        "numTargetRowsNotMatchedBySourceUpdated": "159773",
+        "numTargetRowsNotMatchedBySourceDeleted": "0",
+        "numTargetBytesRemoved": "1083172762"
+      },
+      "source_rows_valid": 15498687,
+      "quarantined": 0,
+      "recovered_from_commit": false,
+      "applied_at": "2026-11-13T16:29:49+00:00",
+      "seconds": 295.4
+    },
+    {
+      "asset": "silver.op_profile",
+      "table": "op_profile",
+      "publication": "2026-06",
+      "rows": 1697025,
+      "quarantined": 0,
+      "seconds": 8.5
+    },
+    {
+      "asset": "silver.op_removed",
+      "table": "op_removed",
+      "publication": "2026-06",
+      "rows": 160183,
+      "quarantined": 0,
+      "seconds": 2.1
+    },
+    {
+      "asset": "silver.op_recipient_nature_summary",
+      "table": "op_recipient_nature_summary",
+      "publication": "2026-06",
+      "rows": 1241266,
+      "quarantined": 0,
+      "seconds": 5.6
+    },
+    {
+      "asset": "silver.partd_prescriber_drug",
+      "table": "partd_prescriber_drug",
+      "publication": "DY2024",
+      "rows": 28023892,
+      "quarantined": 0,
+      "seconds": 98.5
+    },
+    {
+      "asset": "silver.partd_prescriber",
+      "table": "partd_prescriber",
+      "publication": "DY2024",
+      "rows": 1416883,
+      "quarantined": 0,
+      "seconds": 5.4
+    },
+    {
+      "asset": "gold.partd_provider",
+      "rows": 1416883,
+      "seconds": 26.1
+    },
+    {
+      "asset": "gold.recipient_resolution",
+      "rows": 1495351,
+      "seconds": 71.4
+    },
+    {
+      "asset": "gold.fct_payment",
+      "version": 1,
+      "operation": "MERGE",
+      "numOutputRows": "15461299",
+      "numTargetBytesAdded": "754694992",
+      "numTargetRowsInserted": "270393",
+      "numTargetFilesAdded": "64",
+      "numTargetRowsMatchedDeleted": "0",
+      "numTargetFilesRemoved": "32",
+      "numTargetRowsMatchedUpdated": "722",
+      "executionTimeMs": "120124",
+      "numTargetDeletionVectorsUpdated": "0",
+      "numTargetRowsCopied": "15190184",
+      "rewriteTimeMs": "57697",
+      "numTargetRowsUpdated": "722",
+      "numTargetDeletionVectorsRemoved": "0",
+      "numTargetRowsDeleted": "159750",
+      "scanTimeMs": "19926",
+      "numSourceRows": "15461299",
+      "numTargetDeletionVectorsAdded": "0",
+      "numTargetChangeFilesAdded": "64",
+      "numTargetRowsNotMatchedBySourceUpdated": "0",
+      "numTargetRowsNotMatchedBySourceDeleted": "159750",
+      "numTargetBytesRemoved": "712545485",
+      "seconds": 120.5
+    },
+    {
+      "asset": "gold.agg_provider_payments",
+      "mode": "incremental",
+      "from_version": 1,
+      "to_version": 1,
+      "npis_recomputed": 90674,
+      "seconds": 6.8
+    },
+    {
+      "asset": "check.agg_incremental_equals_full",
+      "rows_incremental": 984802,
+      "rows_full": 984802,
+      "only_in_incremental": 0,
+      "only_in_full": 0,
+      "full_rebuild_seconds": 7.5
+    },
+    {
+      "asset": "gold.provider_360",
+      "rows": 1663748,
+      "seconds": 20.9
+    }
+  ],
+  "peak_rss_mb_python": 162.6
+}
