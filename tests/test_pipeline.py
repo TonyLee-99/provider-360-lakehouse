@@ -117,3 +117,27 @@ def test_bad_rows_are_quarantined_not_dropped(pipeline):
     reasons = {r for row in quarantined.collect() for r in row["_reasons"]}
     assert "bad_bigint:total_claims" in reasons and "duplicate_key" in reasons
     assert good.count() + quarantined.count() == 8
+
+
+def test_crash_after_silver_commit_recovers_ledger_from_delta_history(pipeline):
+    """Simulate a crash after the June MERGE committed but before the ledger was written: drop the June
+    entries from the ledger and re-apply. The retry must find the tagged commit, not merge again."""
+    import json as _json
+
+    from p360 import lake, silver
+
+    p = silver._ledger_path()
+    saved = p.read_text()
+    entries = _json.loads(saved)
+    p.write_text(
+        _json.dumps(
+            [e for e in entries if not (e["table"] == "op_payment" and e["publication"] == "2026-06")]
+        )
+    )
+    before = lake.latest_version(lake.path("silver", "op_payment"))
+    try:
+        e = silver.apply_op_publication("2026-06")
+        assert e["recovered_from_commit"] is True
+        assert lake.latest_version(lake.path("silver", "op_payment")) == before  # no new MERGE commit
+    finally:
+        p.write_text(saved)

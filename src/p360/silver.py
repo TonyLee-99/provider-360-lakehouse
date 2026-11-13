@@ -52,6 +52,24 @@ def applied(table: str) -> list[str]:
     return [e["publication"] for e in ledger() if e["table"] == table]
 
 
+# ---------- crash gap between a Delta commit and the ledger ----------
+def _commit_tag(table: str, publication: str) -> str:
+    return f"p360:{table}:{publication}"
+
+
+def _find_tagged_commit(target_path: str, tag: str) -> dict | None:
+    """The MERGE commit carries `tag` as Delta userMetadata. If the process died after the commit but before
+    the ledger write, the retry finds the commit here and records it instead of merging again (a second
+    MERGE would be a no-op and the ledger would point at the wrong version)."""
+    if not lake.exists(target_path):
+        return None
+    hist = DeltaTable.forPath(get_spark(), target_path).history().where(F.col("userMetadata") == tag)
+    row = hist.orderBy(F.desc("version")).first()
+    if row is None:
+        return None
+    return {"version": row["version"], "operation": row["operation"], **(row["operationMetrics"] or {})}
+
+
 # ---------- quarantine ----------
 def write_quarantine(bad: DataFrame, table: str, publication: str, key: list[str]) -> int:
     q = bad.select(
@@ -136,7 +154,12 @@ def apply_op_publication(publication: str) -> dict:
             stubs = stubs.withColumn(c, F.lit(None).cast(src.schema[c].dataType))
     src = src.unionByName(stubs.withColumn("_quarantined", F.lit(True)))
 
-    if not lake.exists(target_path):
+    tag = _commit_tag(OP_TABLE, publication)
+    recovered = _find_tagged_commit(target_path, tag) if publication not in done else None
+    spark.conf.set("spark.databricks.delta.commitInfo.userMetadata", tag)
+    if recovered:
+        pass  # committed by a run that crashed before writing the ledger: do not merge again
+    elif not lake.exists(target_path):
         (
             src.where(~F.col("_quarantined"))
             .drop("_quarantined")
@@ -173,7 +196,8 @@ def apply_op_publication(publication: str) -> dict:
             )
             .execute()
         )
-    metrics = lake.last_operation_metrics(target_path)
+    spark.conf.unset("spark.databricks.delta.commitInfo.userMetadata")
+    metrics = recovered or lake.last_operation_metrics(target_path)
     n_bad = write_quarantine(bad, OP_TABLE, publication, contract.primary_key)
     entry = {
         "table": OP_TABLE,
@@ -183,6 +207,7 @@ def apply_op_publication(publication: str) -> dict:
         "metrics": {k: v for k, v in metrics.items() if k.startswith("num")},
         "source_rows_valid": n_source,
         "quarantined": n_bad,
+        "recovered_from_commit": bool(recovered),
         "applied_at": datetime.now(UTC).isoformat(timespec="seconds"),
     }
     _append_ledger(entry)

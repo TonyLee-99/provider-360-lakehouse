@@ -15,7 +15,6 @@ import time
 
 from dagster import (
     AssetCheckResult,
-    AssetCheckSeverity,
     AssetExecutionContext,
     AssetKey,
     Config,
@@ -148,6 +147,38 @@ def op_matches_cms_totals() -> AssetCheckResult:
     return AssetCheckResult(passed=r["exact"], metadata={k: str(v) for k, v in r.items()})
 
 
+@asset_check(
+    asset=silver_reference_tables,
+    blocking=True,
+    description="each reference table within the quarantine budget",
+)
+def reference_quarantine_budget() -> AssetCheckResult:
+    rates = {}
+    for t in silver.STATIC:
+        good = lake.read("silver", t).count()
+        q = lake.read("silver", "quarantine").where(F.col("table") == t).count()
+        rates[t] = q / max(good + q, 1)
+    return AssetCheckResult(
+        passed=all(r <= QUARANTINE_BUDGET for r in rates.values()),
+        metadata={k: float(v) for k, v in rates.items()},
+    )
+
+
+@asset_check(
+    asset=silver_nppes_provider, blocking=True, description="every NPPES file within the quarantine budget"
+)
+def nppes_quarantine_budget() -> AssetCheckResult:
+    rates = {
+        e["publication"]: _quarantine_rate("nppes_provider", e["publication"], e["source_rows_valid"])
+        for e in silver.ledger()
+        if e["table"] == "nppes_provider"
+    }
+    return AssetCheckResult(
+        passed=all(r <= QUARANTINE_BUDGET for r in rates.values()),
+        metadata={k: float(v) for k, v in rates.items()},
+    )
+
+
 @asset_check(asset=silver_nppes_provider, blocking=True, description="npi unique")
 def nppes_primary_key_unique() -> AssetCheckResult:
     df = lake.read("silver", "nppes_provider")
@@ -204,7 +235,7 @@ def gold_partd_provider() -> MaterializeResult:
 
 @asset_check(
     asset=gold_partd_provider,
-    blocking=False,
+    blocking=True,
     description="R3: by-drug claims never exceed CMS's by-provider totals",
 )
 def partd_matches_provider_file() -> AssetCheckResult:
@@ -212,7 +243,6 @@ def partd_matches_provider_file() -> AssetCheckResult:
     record("r3_partd_by_provider", r)
     return AssetCheckResult(
         passed=r["unexplained_npis"] == 0,
-        severity=AssetCheckSeverity.WARN,
         metadata={"exact_pct": r["exact_pct"], "unexplained_npis": r["unexplained_npis"]},
     )
 
@@ -297,6 +327,8 @@ ALL_CHECKS = [
     op_primary_key_unique,
     op_matches_cms_totals,
     nppes_primary_key_unique,
+    nppes_quarantine_budget,
+    reference_quarantine_budget,
     agg_incremental_equals_full,
     partd_matches_provider_file,
     public_has_no_direct_pii,

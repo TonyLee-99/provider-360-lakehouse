@@ -13,7 +13,7 @@ from p360 import contracts, lake
 
 # gold.provider_360 column -> list of (contract, source alias); [] means computed from other gold columns
 PROVIDER_360_LINEAGE: dict[str, list[tuple[str, str]]] = {
-    "npi": [("nppes_provider", "npi"), ("partd_prescriber_drug", "npi")],
+    "npi": [("nppes_provider", "npi"), ("partd_prescriber", "npi")],
     "entity_type": [("nppes_provider", "entity_type")],
     "first_name": [("nppes_provider", "first_name")],
     "last_name": [("nppes_provider", "last_name")],
@@ -34,10 +34,11 @@ PROVIDER_360_LINEAGE: dict[str, list[tuple[str, str]]] = {
     "paying_companies": [("op_general_payment", "manufacturer_id")],
     "first_payment_date": [("op_general_payment", "payment_date")],
     "last_payment_date": [("op_general_payment", "payment_date")],
-    "partd_claims": [("partd_prescriber_drug", "total_claims")],
-    "partd_drug_cost": [("partd_prescriber_drug", "total_drug_cost")],
-    "partd_brands": [("partd_prescriber_drug", "brand_name")],
-    "partd_prescriber_type": [("partd_prescriber_drug", "prescriber_type")],
+    "partd_total_claims": [("partd_prescriber", "total_claims")],
+    "partd_total_drug_cost": [("partd_prescriber", "total_drug_cost")],
+    "partd_prescriber_type": [("partd_prescriber", "prescriber_type")],
+    "partd_drug_row_claims": [("partd_prescriber_drug", "total_claims")],
+    "partd_brands_observed": [("partd_prescriber_drug", "brand_name")],
     "partd_state": [("partd_prescriber_drug", "state")],
     "partd_last_name": [("partd_prescriber_drug", "last_name")],
     "in_registry": [],

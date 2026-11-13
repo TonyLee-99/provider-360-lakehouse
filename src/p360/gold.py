@@ -220,15 +220,25 @@ def compare_agg(a: str = "agg_provider_payments", b: str = "agg_provider_payment
 
 # ---------- Part D and the provider master ----------
 def build_partd_provider() -> dict:
+    """Per-NPI Part D: CMS's own totals from the by-provider file, plus what the by-drug rows add up to.
+
+    The by-drug file omits drug rows with fewer than 11 claims, so `partd_drug_row_claims` is an observed
+    subtotal (about 87% of claims nationally), never the provider's total. `partd_total_claims` is the total.
+    """
     d = lake.read("silver", "partd_prescriber_drug")
-    agg = d.groupBy("npi").agg(
-        F.sum("total_claims").alias("partd_claims"),
-        F.sum("total_drug_cost").alias("partd_drug_cost"),
-        F.countDistinct("brand_name").alias("partd_brands"),
-        F.first("prescriber_type", ignorenulls=True).alias("partd_prescriber_type"),
+    drugs = d.groupBy("npi").agg(
+        F.sum("total_claims").alias("partd_drug_row_claims"),
+        F.countDistinct("brand_name").alias("partd_brands_observed"),
         F.first("state", ignorenulls=True).alias("partd_state"),
         F.first("last_name", ignorenulls=True).alias("partd_last_name"),
     )
+    prov = lake.read("silver", "partd_prescriber").select(
+        "npi",
+        F.col("total_claims").alias("partd_total_claims"),
+        F.col("total_drug_cost").alias("partd_total_drug_cost"),
+        F.col("prescriber_type").alias("partd_prescriber_type"),
+    )
+    agg = prov.join(drugs, "npi", "full_outer")
     agg.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save(
         lake.path("gold", "partd_provider")
     )
@@ -262,12 +272,14 @@ def build_provider_360() -> dict:
         "deactivation_date",
         "reactivation_date",
         F.col("source_publication").alias("registry_publication"),
+        F.lit(True).alias("_in_registry"),  # sentinel: deactivated rows have no entity type or name
     )
     p360 = (
         ids.join(reg, "npi", "left")
         .join(pay, "npi", "left")
         .join(rx, "npi", "left")
-        .withColumn("in_registry", F.col("entity_type").isNotNull())
+        .withColumn("in_registry", F.coalesce(F.col("_in_registry"), F.lit(False)))
+        .drop("_in_registry")
         .withColumn(
             "registry_status",
             F.when(~F.col("in_registry"), "not_in_registry")
@@ -282,7 +294,7 @@ def build_provider_360() -> dict:
             .otherwise("active"),
         )
         .withColumn("has_payments", F.col("payment_records").isNotNull())
-        .withColumn("has_partd", F.col("partd_claims").isNotNull())
+        .withColumn("has_partd", F.col("partd_total_claims").isNotNull())
         # conflicts between sources (NPPES is the golden source for identity; the others are evidence)
         .withColumn(
             "conflict_state_partd",

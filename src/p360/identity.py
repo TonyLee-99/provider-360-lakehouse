@@ -184,8 +184,8 @@ def wilson(k: int, n: int, z: float = 1.96) -> list[float]:
 def evaluate_matcher(resolutions: DataFrame, test_mod: int = 5, use_state: bool | None = None) -> dict:
     """Provider-disjoint holdout: truth = record NPI (rung 1); hide it and run rungs 3-4 only.
 
-    The split is by Profile_ID hash, so a provider is entirely in dev or entirely in test. Rules were written
-    looking at dev only; the reported numbers are test. Entity level = one row per distinct recipient identity.
+    The split is by true NPI, so a provider is entirely in dev or entirely in test. Rules were chosen
+    on dev only; the reported numbers are test. Entity level = one row per distinct recipient identity.
     """
     truth = resolutions.where(F.col("method") == "record_npi").select(
         "recipient_profile_id",
@@ -196,16 +196,20 @@ def evaluate_matcher(resolutions: DataFrame, test_mod: int = 5, use_state: bool 
         "state",
         F.col("resolved_npi").alias("true_npi"),
     )
+    # split by the true NPI: one provider is entirely dev or entirely test (several Profile_IDs or name
+    # spellings of the same person stay together); a row id carries truth through the matcher, so rows with
+    # NULL names or ZIPs are scored too (as misses) instead of falling out of a join
     truth = truth.withColumn(
-        "split", F.when(F.abs(F.hash("recipient_profile_id")) % test_mod == 0, "test").otherwise("dev")
-    )
+        "split", F.when(F.abs(F.xxhash64("true_npi")) % test_mod == 0, "test").otherwise("dev")
+    ).withColumn("_eid", F.monotonically_increasing_id())
+    truth = truth.cache()
     pred = resolve(truth.drop("true_npi", "split"), use_npi=False, use_state=use_state)
-    joined = pred.join(
-        truth.select(
-            "recipient_profile_id", "recipient_npi_raw", "fn", "ln", "zip5", "state", "true_npi", "split"
-        ),
-        ["recipient_profile_id", "recipient_npi_raw", "fn", "ln", "zip5", "state"],
+    joined = pred.select("_eid", "method", "resolved_npi").join(
+        truth.select("_eid", "true_npi", "split"), "_eid"
     )
+    n_truth, n_joined = truth.count(), joined.count()
+    if n_truth != n_joined:
+        raise AssertionError(f"holdout lost rows: {n_truth} truth vs {n_joined} scored")
     out = {}
     rows = (
         joined.groupBy("split")
